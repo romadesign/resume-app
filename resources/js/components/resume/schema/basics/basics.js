@@ -1,5 +1,11 @@
 export default {
     fields: [
+      //Profile Image
+      {
+        type: 'resume-image',
+        label: 'Resume Profile Image',
+        model: 'picture',
+      },
       // Name
       {
         type: 'input',
@@ -7,6 +13,16 @@ export default {
         placeholder: 'Your Name',
         label: 'Name',
         model: 'name',
+        styleClasses: ['col-md-4', 'p-0', 'pr-md-1'],
+      },
+      // Label
+      {
+        type: 'input',
+        inputType: 'text',
+        placeholder: 'Programmer',
+        label: 'Label',
+        //nombre de la clave del objeto que esta igual en el createTableResume
+        model: 'label',
         styleClasses: ['col-md-4', 'p-0', 'pr-md-1'],
       },
       // Email
