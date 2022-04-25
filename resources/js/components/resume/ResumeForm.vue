@@ -1,5 +1,28 @@
 <template>
   <div>
+    <Alert 
+      v-if="Array.isArray(alert.messages) && alert.messages.length > 0 || typeof alert.messages === 'string'"
+      :messages="alert.messages"
+      :types="alert.type"
+    />
+    <div class="row mb-3">
+      <div class="col-sm-8">
+        <div class="form-group">
+          <input
+            v-model="resume.title"
+            placeholder="Resume Title"
+            required
+            autofocus
+            class="form-control w-100"
+          />
+        </div>
+      </div>
+      <div class="col-sm-4">
+        <button class="btn btn-success btn-block" @click="submit()">
+          Submit <i class="fa fa-upload"></i>
+        </button>
+      </div>
+    </div>
     <Tabs>
       <Tab title="Basics" icon="fa fa-user">
         <VueFormGenerator
@@ -62,7 +85,8 @@
 </template>
 <script>
 //datos de prueba import
-import jsonresume from './jsonresume'
+import jsonresume from "./jsonresume";
+import Alert from '../reusable/Alert.vue'
 import Tabs from "./tabs/Tabs";
 import Tab from "./tabs/Tab";
 import DynamicForm from "./dynamic/DynamicForm";
@@ -80,13 +104,13 @@ import { component as VueFormGenerator } from "vue-form-generator";
 //import validate vueGeneratorForm
 import "vue-form-generator/dist/vfg.css";
 
-
 export default {
   name: "ResumeForm",
 
   components: {
     Tabs,
     Tab,
+    Alert,
     VueFormGenerator,
     DynamicForm,
     ListForm,
@@ -103,14 +127,19 @@ export default {
       type: Object,
       default: () => ({
         id: null,
-        title: 'Resume title',
+        title: "Resume title",
         content: jsonresume,
-      })
-    }
+      }),
+    },
   },
 
   data() {
     return {
+      //alert
+      alert:{
+        type: 'warning',
+        messages: [],
+      },
       //utilizando los datos del json basics  y que estara en resume.basic de arriba
       schemas: {
         basics,
@@ -163,6 +192,17 @@ export default {
         validateAsync: true,
       },
     };
+  },
+
+  methods: {
+    async submit() {
+      try {
+        const res = await axios.post("http://127.0.0.1:8001/resumes", this.resume);
+        console.log(res.data);
+      } catch (e) {
+        this.alert.messages = ['ha habido un error']
+      }
+    },
   },
 };
 </script>
