@@ -61,6 +61,8 @@
   </div>
 </template>
 <script>
+//datos de prueba import
+import jsonresume from './jsonresume'
 import Tabs from "./tabs/Tabs";
 import Tab from "./tabs/Tab";
 import DynamicForm from "./dynamic/DynamicForm";
@@ -78,6 +80,7 @@ import { component as VueFormGenerator } from "vue-form-generator";
 //import validate vueGeneratorForm
 import "vue-form-generator/dist/vfg.css";
 
+
 export default {
   name: "ResumeForm",
 
@@ -90,19 +93,24 @@ export default {
     education,
     awards,
     skills,
+    jsonresume,
+  },
+
+  //datos para prueba formulario
+  props: {
+    update: false,
+    resume: {
+      type: Object,
+      default: () => ({
+        id: null,
+        title: 'Resume title',
+        content: jsonresume,
+      })
+    }
   },
 
   data() {
     return {
-      //info que va a enviar a la base de datos
-      resume: {
-        title: "",
-        content: {
-          basics: {
-            location: {},
-          },
-        },
-      },
       //utilizando los datos del json basics  y que estara en resume.basic de arriba
       schemas: {
         basics,
@@ -136,7 +144,7 @@ export default {
             },
           },
         ],
-        skilles: [
+        skills: [
           {
             component: ListForm,
             props: {
