@@ -19,7 +19,7 @@ class ResumeFactory extends Factory
 						"basics" => [
 								"name" => $this->faker->name(),
 								"label" => $this->faker->jobTitle,
-								"picture" => "/storage/pictures/default.png",
+								"picture" => "/pictures/default.png",
 								"email" => $this->faker->safeEmail,
 								"phone" => $this->faker->phoneNumber,
 								"website" => $this->faker->url,

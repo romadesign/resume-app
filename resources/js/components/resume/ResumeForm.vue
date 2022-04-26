@@ -197,7 +197,7 @@ export default {
   methods: {
     async submit() {
       try {
-        const res = await axios.post("http://127.0.0.1:8001/resumes", this.resume);
+        const res = await axios.post("http://127.0.0.1:8000/resumes", this.resume);
         console.log(res.data);
       } catch (e) {
         this.alert.messages = ['ha habido un error']

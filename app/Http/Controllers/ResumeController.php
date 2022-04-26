@@ -26,7 +26,7 @@ class ResumeController extends Controller
 	private function savePicture($blob){
         $img = Image::make($blob);
         $fileName = Str::uuid() . '.' . explode('/', $img->mime())[1];
-        $filePath = '/storage/pictures/' . $fileName;
+        $filePath = '/pictures/' . $fileName;
         $img->save(public_path($filePath));
 
         return $filePath;
@@ -35,7 +35,7 @@ class ResumeController extends Controller
 	public function store(StoreResume $request) {
         $data = $request->validated();
         $picture = $data['content']['basics']['picture'];
-        if ($picture !== '/storage/pictures/default.png') {
+        if ($picture !== '/pictures/default.png') {
             return response($this->savePicture($picture));
         }
 
