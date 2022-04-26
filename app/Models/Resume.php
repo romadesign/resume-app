@@ -9,9 +9,9 @@ class Resume extends Model
 {
     use HasFactory;
 
-    protected $filable = [
+    protected $fillable = [
         'title',
-        'content'
+        'content',
     ];
 
     protected $casts = [

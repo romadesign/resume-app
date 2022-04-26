@@ -3,7 +3,7 @@
     <Alert 
       v-if="Array.isArray(alert.messages) && alert.messages.length > 0 || typeof alert.messages === 'string'"
       :messages="alert.messages"
-      :types="alert.type"
+      :type="alert.type"
     />
     <div class="row mb-3">
       <div class="col-sm-8">
@@ -147,7 +147,6 @@ export default {
         profiles,
         work,
         education,
-        work,
         skills,
         awards,
       },
@@ -197,8 +196,10 @@ export default {
   methods: {
     async submit() {
       try {
-        const res = await axios.post("http://127.0.0.1:8000/resumes", this.resume);
-        console.log(res.data);
+        let res = this.update
+              ? await axios.put(route('resumes.update', this.resume.id), this.resume)
+              : await axios.post(route('resumes.store'), this.resume.id);
+            window.location = '/home'
       } catch (e) {
         this.alert.messages = ['ha habido un error']
       }

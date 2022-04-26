@@ -5301,8 +5301,6 @@ function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try
 
 function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
 
-function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-
 //
 //
 //
@@ -5436,8 +5434,6 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
     }
   },
   data: function data() {
-    var _schemas;
-
     return {
       //alert
       alert: {
@@ -5445,13 +5441,15 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         messages: []
       },
       //utilizando los datos del json basics  y que estara en resume.basic de arriba
-      schemas: (_schemas = {
+      schemas: {
         basics: _schema_basics_basics__WEBPACK_IMPORTED_MODULE_7__["default"],
         location: _schema_basics_location__WEBPACK_IMPORTED_MODULE_8__["default"],
         profiles: _schema_basics_profiles__WEBPACK_IMPORTED_MODULE_9__["default"],
         work: _schema_work__WEBPACK_IMPORTED_MODULE_10__["default"],
-        education: _schema_education__WEBPACK_IMPORTED_MODULE_11__["default"]
-      }, _defineProperty(_schemas, "work", _schema_work__WEBPACK_IMPORTED_MODULE_10__["default"]), _defineProperty(_schemas, "skills", _schema_skills__WEBPACK_IMPORTED_MODULE_13__["default"]), _defineProperty(_schemas, "awards", _schema_awards__WEBPACK_IMPORTED_MODULE_12__["default"]), _schemas),
+        education: _schema_education__WEBPACK_IMPORTED_MODULE_11__["default"],
+        skills: _schema_skills__WEBPACK_IMPORTED_MODULE_13__["default"],
+        awards: _schema_awards__WEBPACK_IMPORTED_MODULE_12__["default"]
+      },
       subforms: {
         work: [{
           component: _dynamic_ListForm__WEBPACK_IMPORTED_MODULE_6__["default"],
@@ -5497,26 +5495,44 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
             switch (_context.prev = _context.next) {
               case 0:
                 _context.prev = 0;
-                _context.next = 3;
-                return axios.post("http://127.0.0.1:8000/resumes", _this.resume);
 
-              case 3:
-                res = _context.sent;
-                console.log(res.data);
+                if (!_this.update) {
+                  _context.next = 7;
+                  break;
+                }
+
+                _context.next = 4;
+                return axios.put(route('resumes.update', _this.resume.id), _this.resume);
+
+              case 4:
+                _context.t0 = _context.sent;
                 _context.next = 10;
                 break;
 
               case 7:
-                _context.prev = 7;
-                _context.t0 = _context["catch"](0);
-                _this.alert.messages = ['ha habido un error'];
+                _context.next = 9;
+                return axios.post(route('resumes.store'), _this.resume.id);
+
+              case 9:
+                _context.t0 = _context.sent;
 
               case 10:
+                res = _context.t0;
+                window.location = '/home';
+                _context.next = 17;
+                break;
+
+              case 14:
+                _context.prev = 14;
+                _context.t1 = _context["catch"](0);
+                _this.alert.messages = ['ha habido un error'];
+
+              case 17:
               case "end":
                 return _context.stop();
             }
           }
-        }, _callee, null, [[0, 7]]);
+        }, _callee, null, [[0, 14]]);
       }))();
     }
   }
@@ -5760,7 +5776,7 @@ __webpack_require__.r(__webpack_exports__);
   },
   data: function data() {
     return {
-      tab: 1
+      tab: 0
     };
   }
 });
@@ -5799,7 +5815,7 @@ __webpack_require__.r(__webpack_exports__);
   data: function data() {
     return {
       reader: new FileReader(),
-      image: "https://raw.githubusercontent.com/antoniosarosi/jsonresume-manager/master/storage/app/public/images/default.png"
+      image: this.model[this.schema.model]
     };
   },
   created: function created() {
@@ -5836,13 +5852,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
-//
-//
-//
-//
-//
-//
-//
 //
 //
 //
@@ -35665,7 +35674,7 @@ var render = function () {
       (Array.isArray(_vm.alert.messages) && _vm.alert.messages.length > 0) ||
       typeof _vm.alert.messages === "string"
         ? _c("Alert", {
-            attrs: { messages: _vm.alert.messages, types: _vm.alert.type },
+            attrs: { messages: _vm.alert.messages, type: _vm.alert.type },
           })
         : _vm._e(),
       _vm._v(" "),
@@ -36267,23 +36276,19 @@ var render = function () {
             0
           ),
       _vm._v(" "),
-      _c(
-        "button",
-        {
-          staticClass: "close",
-          attrs: {
-            type: "button",
-            "data-dismiss": "alert",
-            "aria-label": "Close",
-          },
-          on: {
-            click: function ($event) {
-              return _vm.$emit("close")
-            },
+      _c("button", {
+        staticClass: "btn-close",
+        attrs: {
+          type: "button",
+          "data-bs-dismiss": "alert",
+          "aria-label": "Close",
+        },
+        on: {
+          click: function ($event) {
+            return _vm.$emit("close")
           },
         },
-        [_c("span", { attrs: { "aria-hidden": "true" } }, [_vm._v("×")])]
-      ),
+      }),
     ]
   )
 }
