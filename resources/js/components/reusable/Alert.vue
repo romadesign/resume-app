@@ -11,7 +11,6 @@
     <ul class="mb-0" v-else>
       <li v-for="(msg, i) in messages" :key="i" v-html="msg" />
     </ul>
-    </button>
     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close" @click="$emit('close')"></button>
   </div>
 </template>

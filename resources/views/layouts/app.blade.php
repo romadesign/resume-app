@@ -35,7 +35,18 @@
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <!-- Left Side Of Navbar -->
                     <ul class="navbar-nav me-auto">
-
+                      <li>
+                        <a href="{{route('resumes.create')}}">
+                          <i class="fa fa-file"></i>
+                          New Resume
+                        </a>
+                      </li>
+                      <li class="ml-md-2">
+                        <a href="{{route('resumes.index')}}">
+                          <i class="fa fa-list"></i>
+                          View Resume
+                        </a>
+                      </li>
                     </ul>
 
                     <!-- Right Side Of Navbar -->

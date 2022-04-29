@@ -4,6 +4,7 @@
       v-if="Array.isArray(alert.messages) && alert.messages.length > 0 || typeof alert.messages === 'string'"
       :messages="alert.messages"
       :type="alert.type"
+      @close="alert.messages = []"
     />
     <div class="row mb-3">
       <div class="col-sm-8">
@@ -192,22 +193,75 @@ export default {
       },
     };
   },
-
+  mounted() {
+    console.log(this.resume);
+  },
   methods: {
+    validate(target, parent = 'resume') {
+      let errors = [];
+      for (const [prop, value] of Object.entries(target)) {
+        if (Array.isArray(value)) {
+          if (value.length === 0) {
+            errors.push(`${parent} > ${prop} must have at least one element`);
+            continue;
+          }
+          for (let i in value) {
+            if (typeof value[i] === null || value[i] === '') {
+              errors.push(`${parent} > ${prop} > ${i} cannot be empty`);
+            } else if (typeof value[i] === 'object') {
+              errors = errors.concat(
+                  this.validate(value[i], `${parent} > ${prop} > ${i}`)
+              );
+            }
+          }
+        } else if (typeof value === 'object') {
+          errors = errors.concat(this.validate(value, `${parent} > ${prop}`));
+        } else if (value === null || value === '') {
+          errors.push(`${parent} > ${prop} is required`);
+        }
+      }
+      return errors;
+    },
+    isValid() {
+      const { alert } = this.$data;
+      const { resume } = this.$props;
+      alert.messages = [];
+      const errors = this.validate(resume.content);
+      if (errors.length == 0) {
+        return true;
+      }
+      alert.type = 'warning';
+      alert.messages = errors.slice(0, 3);
+      if (errors.length > 3) {
+        alert.messages.push(
+            `<strong>${errors.length - 3} more errors...</strong>`
+        );
+      }
+      return false;
+    },
     async submit() {
+      if (!this.isValid()) {
+        return;
+      }
+      const { alert } = this.$data;
+      const { resume, update } = this.$props;
       try {
-        let res = this.update
-              ? await axios.put(route('resumes.update', this.resume.id), this.resume)
-              : await axios.post(route('resumes.store'), this.resume.id);
-            window.location = '/home'
+        const res = update
+            ? await axios.put(route('resumes.update', resume.id), resume)
+            : await axios.post(route('resumes.store'), resume);
+        window.location = route('resumes.index');
       } catch (e) {
-        this.alert.messages = ['ha habido un error']
+        const errors = e.response.data.errors
+        for (const [prop, value] of Object.entries(errors)) {
+          const origin = prop.split('.').join(' > ');
+          for (const error of value) {
+            const message = error.replace(prop, `<strong>${origin}</strong>`);
+            alert.messages.push(message);
+          }
+        }
+        alert.type = 'danger';
       }
     },
   },
 };
 </script>
-
-
-
-

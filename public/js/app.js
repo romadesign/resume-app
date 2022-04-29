@@ -5297,10 +5297,27 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var vue_form_generator_dist_vfg_css__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! vue-form-generator/dist/vfg.css */ "./node_modules/vue-form-generator/dist/vfg.css");
 
 
+function _createForOfIteratorHelper(o, allowArrayLike) { var it = typeof Symbol !== "undefined" && o[Symbol.iterator] || o["@@iterator"]; if (!it) { if (Array.isArray(o) || (it = _unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") { if (it) o = it; var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e2) { throw _e2; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var normalCompletion = true, didErr = false, err; return { s: function s() { it = it.call(o); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e3) { didErr = true; err = _e3; }, f: function f() { try { if (!normalCompletion && it["return"] != null) it["return"](); } finally { if (didErr) throw err; } } }; }
+
 function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
 
 function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
 
+function _typeof(obj) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (obj) { return typeof obj; } : function (obj) { return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }, _typeof(obj); }
+
+function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _unsupportedIterableToArray(arr, i) || _nonIterableRest(); }
+
+function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
+
+function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
+
+function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
+
+function _iterableToArrayLimit(arr, i) { var _i = arr == null ? null : typeof Symbol !== "undefined" && arr[Symbol.iterator] || arr["@@iterator"]; if (_i == null) return; var _arr = []; var _n = true; var _d = false; var _s, _e; try { for (_i = _i.call(arr); !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
+
+function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
+
+//
 //
 //
 //
@@ -5484,55 +5501,139 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       }
     };
   },
+  mounted: function mounted() {
+    console.log(this.resume);
+  },
   methods: {
+    validate: function validate(target) {
+      var parent = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'resume';
+      var errors = [];
+
+      for (var _i = 0, _Object$entries = Object.entries(target); _i < _Object$entries.length; _i++) {
+        var _Object$entries$_i = _slicedToArray(_Object$entries[_i], 2),
+            prop = _Object$entries$_i[0],
+            value = _Object$entries$_i[1];
+
+        if (Array.isArray(value)) {
+          if (value.length === 0) {
+            errors.push("".concat(parent, " > ").concat(prop, " must have at least one element"));
+            continue;
+          }
+
+          for (var i in value) {
+            if (typeof value[i] === null || value[i] === '') {
+              errors.push("".concat(parent, " > ").concat(prop, " > ").concat(i, " cannot be empty"));
+            } else if (_typeof(value[i]) === 'object') {
+              errors = errors.concat(this.validate(value[i], "".concat(parent, " > ").concat(prop, " > ").concat(i)));
+            }
+          }
+        } else if (_typeof(value) === 'object') {
+          errors = errors.concat(this.validate(value, "".concat(parent, " > ").concat(prop)));
+        } else if (value === null || value === '') {
+          errors.push("".concat(parent, " > ").concat(prop, " is required"));
+        }
+      }
+
+      return errors;
+    },
+    isValid: function isValid() {
+      var alert = this.$data.alert;
+      var resume = this.$props.resume;
+      alert.messages = [];
+      var errors = this.validate(resume.content);
+
+      if (errors.length == 0) {
+        return true;
+      }
+
+      alert.type = 'warning';
+      alert.messages = errors.slice(0, 3);
+
+      if (errors.length > 3) {
+        alert.messages.push("<strong>".concat(errors.length - 3, " more errors...</strong>"));
+      }
+
+      return false;
+    },
     submit: function submit() {
       var _this = this;
 
       return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee() {
-        var res;
+        var alert, _this$$props, resume, update, res, errors, _i2, _Object$entries2, _Object$entries2$_i, prop, value, origin, _iterator, _step, error, message;
+
         return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee$(_context) {
           while (1) {
             switch (_context.prev = _context.next) {
               case 0:
-                _context.prev = 0;
-
-                if (!_this.update) {
-                  _context.next = 7;
+                if (_this.isValid()) {
+                  _context.next = 2;
                   break;
                 }
 
-                _context.next = 4;
-                return axios.put(route('resumes.update', _this.resume.id), _this.resume);
+                return _context.abrupt("return");
 
-              case 4:
+              case 2:
+                alert = _this.$data.alert;
+                _this$$props = _this.$props, resume = _this$$props.resume, update = _this$$props.update;
+                _context.prev = 4;
+
+                if (!update) {
+                  _context.next = 11;
+                  break;
+                }
+
+                _context.next = 8;
+                return axios.put(route('resumes.update', resume.id), resume);
+
+              case 8:
                 _context.t0 = _context.sent;
-                _context.next = 10;
+                _context.next = 14;
                 break;
 
-              case 7:
-                _context.next = 9;
-                return axios.post(route('resumes.store'), _this.resume.id);
+              case 11:
+                _context.next = 13;
+                return axios.post(route('resumes.store'), resume);
 
-              case 9:
+              case 13:
                 _context.t0 = _context.sent;
-
-              case 10:
-                res = _context.t0;
-                window.location = '/home';
-                _context.next = 17;
-                break;
 
               case 14:
-                _context.prev = 14;
-                _context.t1 = _context["catch"](0);
-                _this.alert.messages = ['ha habido un error'];
+                res = _context.t0;
+                window.location = route('resumes.index');
+                _context.next = 23;
+                break;
 
-              case 17:
+              case 18:
+                _context.prev = 18;
+                _context.t1 = _context["catch"](4);
+                errors = _context.t1.response.data.errors;
+
+                for (_i2 = 0, _Object$entries2 = Object.entries(errors); _i2 < _Object$entries2.length; _i2++) {
+                  _Object$entries2$_i = _slicedToArray(_Object$entries2[_i2], 2), prop = _Object$entries2$_i[0], value = _Object$entries2$_i[1];
+                  origin = prop.split('.').join(' > ');
+                  _iterator = _createForOfIteratorHelper(value);
+
+                  try {
+                    for (_iterator.s(); !(_step = _iterator.n()).done;) {
+                      error = _step.value;
+                      message = error.replace(prop, "<strong>".concat(origin, "</strong>"));
+                      alert.messages.push(message);
+                    }
+                  } catch (err) {
+                    _iterator.e(err);
+                  } finally {
+                    _iterator.f();
+                  }
+                }
+
+                alert.type = 'danger';
+
+              case 23:
               case "end":
                 return _context.stop();
             }
           }
-        }, _callee, null, [[0, 14]]);
+        }, _callee, null, [[4, 18]]);
       }))();
     }
   }
@@ -5852,7 +5953,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
-//
 //
 //
 //
@@ -35675,6 +35775,11 @@ var render = function () {
       typeof _vm.alert.messages === "string"
         ? _c("Alert", {
             attrs: { messages: _vm.alert.messages, type: _vm.alert.type },
+            on: {
+              close: function ($event) {
+                _vm.alert.messages = []
+              },
+            },
           })
         : _vm._e(),
       _vm._v(" "),
