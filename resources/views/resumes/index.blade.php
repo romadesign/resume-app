@@ -21,7 +21,13 @@
                 </a>
                </div>
                <div>
-                 delete
+                 <form method="post" action="{{route('resumes.destroy', $resume->id)}}">
+                    @csrf
+                    @method('DELETE')
+                    <button type="submit" class="btn btn-danger ms-2">
+                      Delete
+                    </button>
+                  </form>
                </div>
              </div>
            </div>

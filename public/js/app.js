@@ -6143,7 +6143,7 @@ __webpack_require__.r(__webpack_exports__);
   basics: {
     name: '',
     label: '',
-    picture: '/storage/pictures/default.png',
+    picture: '/pictures/default.png',
     email: '',
     phone: '',
     website: '',
